@@ -74,7 +74,9 @@ let UIController = (() => {
     inputType: '.add__type',
     inputDescription: '.add__description',
     inputValue: '.add__value',
-    inputBtn: '.add__btn'
+		inputBtn: '.add__btn',
+		incomeContainer: '.income__list',
+		expensesContainer: '.expenses__list'
   };
 
   return {
@@ -85,7 +87,54 @@ let UIController = (() => {
         description: document.querySelector(DOMstrings.inputDescription).value,
         value: document.querySelector(DOMstrings.inputValue).value
       };
-    },
+		},
+		
+		//add item to DOM
+		addListItems: (obj, type) => {
+
+			let html, newHtml, element;
+
+			// Create HTML string with placeholder text
+			if(type === 'inc') {
+
+				element = DOMstrings.incomeContainer;
+			//income
+			html = `<div class="item clearfix" id="income-${obj.id}"><div class="item__description">${obj.description}</div><div class="right clearfix"><div class="item__value">${obj.value}</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>`;
+			} else if (type === 'exp') {
+
+				element = DOMstrings.expensesContainer;
+			//expenses	
+			html = `<div class="item clearfix" id="expense-${obj.id}"><div class="item__description">${obj.description}</div><div class="right clearfix"><div class="item__value">${obj.value}</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>`;
+			}
+
+			// Replace the placeholder text with actual data
+			/* newHtml = html.replace('%id%', obj.id);
+			newHtml = newHtml.replace('%description%', obj.description);
+			newHtml = newHtml.replace('%value%', obj.value); */
+
+			// Insert the HTML into the DOM
+			document.querySelector(element).insertAdjacentHTML('beforeend', html);
+
+		},
+
+		//Clear input fields
+		clearFields: () => {
+
+			let fields, fieldsArr;
+
+			fields = document.querySelectorAll(DOMstrings.inputDescription + ', ' + DOMstrings.inputValue);
+
+			// trick it into thinking we have given it an array
+			fieldsArr = Array.prototype.slice.call(fields);
+
+			fieldsArr.forEach((current, index, array) => {
+				current.value = '';
+			});
+
+			fieldsArr[0].focus();
+
+		},
+
     getDOMstrings: () => {
       return DOMstrings;
     }
@@ -122,9 +171,16 @@ let controller = ((budgetCtrl, UICtrl) => {
 		// 2. Add the item to budget controller
 		newItem = budgetCtrl.addItem(input.type, input.description, input.value);
 
-    // 3. Add the new item to UI
-    // 4. Calculate the budget
-    // 5. Display the budget on UI
+		// 3. Add the new item to UI
+		UICtrl.addListItems(newItem, input.type);
+
+		// 4. Clear the fields
+		UICtrl.clearFields();
+		
+		// 5. Calculate the budget
+		
+		// 6. Display the budget on UI
+		
   };
 
   return {
